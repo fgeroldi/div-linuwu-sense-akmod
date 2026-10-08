@@ -12,3 +12,4 @@ src-tree/
 *~
 .idea/
 .vscode/
+dist/
