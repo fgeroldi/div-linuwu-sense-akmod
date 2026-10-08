@@ -18,11 +18,11 @@ BuildRequires:  elfutils-libelf-devel
 BuildRequires:  gcc
 BuildRequires:  make
 
-# AkmodsBuildRequires is expanded by kmodtool into the Requires of akmod-%{kmod_name}
+# AkmodsBuildRequires is expanded by kmodtool into the Requires of akmod-%%{kmod_name}
 %global AkmodsBuildRequires %{_bindir}/kmodtool, elfutils-libelf-devel, gcc, make, %{name}-common = %{version}-%{release}
 
-# Standard kernel-devel build requirement for local binary kmod building
-%{!?kernels:BuildRequires: gcc, elfutils-libelf-devel, kernel-devel}
+# Standard kernel-devel build requirement for binary kmod building
+%{?kernels:BuildRequires: gcc, elfutils-libelf-devel, kernel-devel-uname-r = %{kernels}}
 
 # kmodtool macro expansion
 %{expand:%(kmodtool --target %{_target_cpu} --repo rpmfusion --kmodname %{kmod_name} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null) }
@@ -97,7 +97,7 @@ getent group linuwu_sense >/dev/null || groupadd -r linuwu_sense
 
 %post -n %{name}-common
 %systemd_post linuwu_sense.service
-%tmpfiles_create_package linuwu_sense %{_tmpfilesdir}/linuwu_sense.conf
+systemd-tmpfiles --create %{_tmpfilesdir}/linuwu_sense.conf >/dev/null 2>&1 || :
 
 %preun -n %{name}-common
 %systemd_preun linuwu_sense.service
