@@ -1,0 +1,14 @@
+# Build artifacts
+*.rpm
+*.tar.gz
+*.tar.xz
+rpmbuild/
+_kmod_build_*
+src-tree/
+
+# System and editor files
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/

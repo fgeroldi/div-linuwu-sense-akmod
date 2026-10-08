@@ -1,0 +1,60 @@
+name: Build Akmod RPM
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:41
+
+    steps:
+      - name: Install build dependencies
+        run: |
+          dnf install -y \
+            rpmdevtools \
+            rpmlint \
+            kmodtool \
+            akmods \
+            gcc \
+            make \
+            systemd-rpm-macros \
+            elfutils-libelf-devel \
+            git
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup rpmbuild tree & download sources
+        run: |
+          rpmdev-setuptree
+          spectool -g -R div-linuwu-sense.spec
+          cp div-linuwu-sense.spec ~/rpmbuild/SPECS/
+
+      - name: Build Akmod and Common RPMs
+        run: |
+          rpmbuild -ba --define "buildforkernels akmod" ~/rpmbuild/SPECS/div-linuwu-sense.spec
+
+      - name: Inspect generated packages
+        run: |
+          echo "=== RPMS ==="
+          ls -lah ~/rpmbuild/RPMS/*
+          echo "=== SRPMS ==="
+          ls -lah ~/rpmbuild/SRPMS/
+
+      - name: Rpmlint checks
+        run: |
+          rpmlint ~/rpmbuild/RPMS/*/*.rpm || true
+
+      - name: Upload RPM Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: akmod-div-linuwu-sense-rpms
+          path: |
+            ~/rpmbuild/RPMS/*/*.rpm
+            ~/rpmbuild/SRPMS/*.rpm
