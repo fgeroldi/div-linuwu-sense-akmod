@@ -2,7 +2,9 @@
 
 Automated **Akmod package** for the [Div-Linuwu-Sense](https://github.com/fgeroldi/Div-Linuwu-Sense) Linux kernel module (Acer Predator & Nitro fan curves, RGB lighting, and turbo mode).
 
-Designed specifically for **Kaeteh OS** and **Fedora Kinoite / Silverblue** (`rpm-ostree`), but also compatible with standard Fedora Workstation (`dnf`).
+Designed specifically for **Kaeteh OS** and **Fedora Kinoite / Silverblue** (`rpm-ostree`), but also fully compatible with standard Fedora Workstation (`dnf`).
+
+Published on Fedora COPR: [copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-sense](https://copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-sense/)
 
 ---
 
@@ -26,9 +28,12 @@ Designed specifically for **Kaeteh OS** and **Fedora Kinoite / Silverblue** (`rp
 Enable the COPR repository and layer the package using `rpm-ostree`:
 
 ```bash
-# 1. Add COPR repository
+# 1. Enable the COPR repository (substitute fedora-43 with your Fedora version if different)
 sudo curl -o /etc/yum.repos.d/_copr:fgeroldi:div-linuwu-sense.repo \
-  https://copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-sense/repo/fedora-41/fgeroldi-div-linuwu-sense-fedora-41.repo
+  https://copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-sense/repo/fedora-43/fgeroldi-div-linuwu-sense-fedora-43.repo
+
+# Or on Fedora systems with dnf-plugins-core:
+# sudo dnf copr enable fgeroldi/div-linuwu-sense
 
 # 2. Install package
 rpm-ostree install akmod-div-linuwu-sense
@@ -70,7 +75,7 @@ After rebooting:
 
 ## Building Locally
 
-To build inside a Fedora 41 container or toolbox:
+To build inside a Fedora container or toolbox:
 
 ```bash
 sudo dnf install -y rpmdevtools rpmlint kmodtool akmods gcc make systemd-rpm-macros elfutils-libelf-devel
@@ -79,6 +84,6 @@ rpmbuild -ba --define "buildforkernels akmod" div-linuwu-sense.spec
 ```
 
 The resulting packages will be in:
-- `~/rpmbuild/RPMS/noarch/akmod-div-linuwu-sense-*.noarch.rpm`
+- `~/rpmbuild/RPMS/x86_64/akmod-div-linuwu-sense-*.rpm`
 - `~/rpmbuild/RPMS/noarch/div-linuwu-sense-common-*.noarch.rpm`
 - `~/rpmbuild/SRPMS/div-linuwu-sense-*.src.rpm`
