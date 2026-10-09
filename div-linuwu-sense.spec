@@ -5,7 +5,7 @@
 
 Name:           %{kmod_name}
 Version:        1.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Kernel module for Acer Predator & Nitro fan/RGB/turbo control
 
 License:        GPL-3.0-only
@@ -18,7 +18,7 @@ BuildRequires:  elfutils-libelf-devel
 BuildRequires:  gcc
 BuildRequires:  make
 
-# AkmodsBuildRequires is expanded by kmodtool into the Requires of akmod-%%{kmod_name}
+# AkmodsBuildRequires is expanded by kmodtool into the Requires of akmod-%{kmod_name}
 %global AkmodsBuildRequires %{_bindir}/kmodtool, elfutils-libelf-devel, gcc, make, %{name}-common = %{version}-%{release}
 
 # Standard kernel-devel build requirement for binary kmod building
@@ -39,8 +39,8 @@ Provides:       linuwu_sense-common = %{version}
 Requires:       systemd
 
 %description -n %{name}-common
-This package contains common files for %{name}, such as the systemd service,
-tmpfiles configuration for sysfs nodes, modules-load configuration,
+This package contains common files for %{name}, such as the systemd
+service, tmpfiles configuration for sysfs nodes, modules-load configuration,
 and modprobe conflict blacklist.
 
 %prep
@@ -79,6 +79,11 @@ for kernel_version in %{?kernel_versions}; do
 done
 
 %{?akmod_install}
+# Ensure the SRPM expected by akmods-ostree-post on Kinoite/Silverblue/OSTree exists
+if [ -f "%{buildroot}%{_usrsrc}/akmods/%{name}-%{version}-%{release}.src.rpm" ] && [ ! -e "%{buildroot}%{_usrsrc}/akmods/%{pkg_kmod_name}-%{version}-%{release}.src.rpm" ]; then
+    ln %{buildroot}%{_usrsrc}/akmods/%{name}-%{version}-%{release}.src.rpm %{buildroot}%{_usrsrc}/akmods/%{pkg_kmod_name}-%{version}-%{release}.src.rpm 2>/dev/null || \
+    cp -p %{buildroot}%{_usrsrc}/akmods/%{name}-%{version}-%{release}.src.rpm %{buildroot}%{_usrsrc}/akmods/%{pkg_kmod_name}-%{version}-%{release}.src.rpm
+fi
 
 # Install userland / common configuration files
 install -D -m 0644 src-tree/linuwu_sense-tmpfiles.conf %{buildroot}%{_tmpfilesdir}/linuwu_sense.conf
@@ -115,5 +120,8 @@ systemd-tmpfiles --create %{_tmpfilesdir}/linuwu_sense.conf >/dev/null 2>&1 || :
 %{_unitdir}/linuwu_sense.service
 
 %changelog
+* Fri Oct 09 2026 Felipe Geroldi <142124821+fgeroldi@users.noreply.github.com> - 1.0.0-2
+- Ensure kmod SRPM is packaged with expected name for akmods-ostree-post on Kinoite/Silverblue
+
 * Thu Oct 08 2026 Felipe Geroldi <142124821+fgeroldi@users.noreply.github.com> - 1.0.0-1
 - Initial akmod packaging for Div-Linuwu-Sense on Fedora / Kaeteh OS

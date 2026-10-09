@@ -10,8 +10,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        fedora_version: [41, 43, 44]
     container:
-      image: fedora:41
+      image: fedora:${{ matrix.fedora_version }}
 
     steps:
       - name: Install build dependencies
@@ -46,6 +50,10 @@ jobs:
           ls -lah ~/rpmbuild/RPMS/*
           echo "=== SRPMS ==="
           ls -lah ~/rpmbuild/SRPMS/
+          echo "=== Akmod package contents ==="
+          rpm -qlp ~/rpmbuild/RPMS/*/*akmod*.rpm
+          echo "=== Akmod scripts ==="
+          rpm -qp --scripts ~/rpmbuild/RPMS/*/*akmod*.rpm
 
       - name: Rpmlint checks
         run: |
@@ -54,7 +62,7 @@ jobs:
       - name: Upload RPM Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: akmod-div-linuwu-sense-rpms
+          name: akmod-div-linuwu-sense-fc${{ matrix.fedora_version }}-rpms
           path: |
             ~/rpmbuild/RPMS/*/*.rpm
             ~/rpmbuild/SRPMS/*.rpm

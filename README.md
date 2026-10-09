@@ -28,9 +28,9 @@ Published on Fedora COPR: [copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-s
 Enable the COPR repository and layer the package using `rpm-ostree`:
 
 ```bash
-# 1. Enable the COPR repository (substitute fedora-43 with your Fedora version if different)
+# 1. Enable the COPR repository (substitute fedora-44 with your Fedora version if different)
 sudo curl -o /etc/yum.repos.d/_copr:fgeroldi:div-linuwu-sense.repo \
-  https://copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-sense/repo/fedora-43/fgeroldi-div-linuwu-sense-fedora-43.repo
+  https://copr.fedorainfracloud.org/coprs/fgeroldi/div-linuwu-sense/repo/fedora-44/fgeroldi-div-linuwu-sense-fedora-44.repo
 
 # Or on Fedora systems with dnf-plugins-core:
 # sudo dnf copr enable fgeroldi/div-linuwu-sense
